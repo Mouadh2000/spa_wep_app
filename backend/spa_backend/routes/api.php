@@ -27,7 +27,6 @@ Route::middleware('auth.token')->get('/me', function (Request $request) {
 Route::controller(AuthController::class)->group(function ($router) {
     Route::post('login', 'login')->name('login');
     Route::post('logout', 'logout')->name('logout')->middleware('auth.token');
-    Route::post('refresh', 'refresh')->name('refresh');
     //User Route
     Route::get('users/views', [UserController::class, 'index'])->name('users.index');
     Route::post('users/create', [UserController::class, 'store'])->name('users.store');

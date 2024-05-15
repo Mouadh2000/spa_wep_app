@@ -41,6 +41,7 @@ import {
   ModalBody,
   ModalFooter
 } from "reactstrap";
+
 import { Button } from 'react-bootstrap';
 
 // Argon Dashboard 2 MUI components
@@ -78,6 +79,9 @@ function Tables() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState([]); 
   const [selectedService, setSelectedService] = useState([]); 
+  const [searchQuery, setSearchQuery] = useState('');
+
+
 
 
   const formatPermissionLevel = (permissionLevel) => {
@@ -106,6 +110,17 @@ function Tables() {
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
+
+
+  const handleSearchInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredUserRows = usersrows.filter((row) =>
+  row['user Name'].toLowerCase().includes(searchQuery.toLowerCase())
+);
+
+
 
 
   const handleUserUpdate = (user) => {
@@ -304,11 +319,22 @@ function Tables() {
       <DashboardNavbar />
       <ArgonBox py={3}>
         <ArgonBox mb={3}>
+          
           <Card>
             <ArgonBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
               <ArgonTypography variant="h6">Users</ArgonTypography>
+              <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
+                <FormGroup className="mb-0">
+                  <InputGroup className="input-group-alternative" style={{ backgroundColor: 'transparent', borderColor: '#5e72e4', }}>
+                      <InputGroupText style={{ color: '#5e72e4' }} >
+                        <i className="fas fa-search" />
+                      </InputGroupText>
+                      <Input type="text" style={{ color: '#5e72e4' }} placeholder="Search" value={searchQuery} onChange={handleSearchInputChange} />
+                  </InputGroup>
+                </FormGroup>
+              </Form>
               <AddUserModal isOpen={isModalOpen} toggle={toggleModal} className="btn btn-primary" />
-
+              
             </ArgonBox>
             <ArgonBox
               sx={{
@@ -320,7 +346,7 @@ function Tables() {
                 },
               }}
             >
-              <Table columns={usercolumns} rows={usersrows} />
+              <Table columns={usercolumns} rows={filteredUserRows} />
             </ArgonBox>
           </Card>
         </ArgonBox>

@@ -39,6 +39,8 @@ import burceMars from "assets/images/bruce-mars.jpg";
 function Header() {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
+  const userString = localStorage.getItem('user');
+  const user = JSON.parse(userString);
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -86,10 +88,10 @@ function Header() {
           <Grid item>
             <ArgonBox height="100%" mt={0.5} lineHeight={1}>
               <ArgonTypography variant="h5" fontWeight="medium">
-                Alex Thompson
+                {user.name}
               </ArgonTypography>
               <ArgonTypography variant="button" color="text" fontWeight="medium">
-                CEO / Co-Founder
+                {user.permission_level}
               </ArgonTypography>
             </ArgonBox>
           </Grid>

@@ -7,6 +7,8 @@ use App\Support\Exceptions\OAuthException;
 use App\Support\Traits\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class AuthController extends Controller
 {
@@ -34,10 +36,6 @@ class AuthController extends Controller
      *
      * @return \App\Modules\Auth\Collections\TokenResource
      */
-    public function refresh(): JsonResponse
-    {
-        return $this->responseWithToken(access_token: auth()->refresh());
-    }
 
     /**
      * Log the user out (Invalidate the token).
@@ -50,4 +48,6 @@ class AuthController extends Controller
 
         return new JsonResponse(['sucess' => true]);
     }
+
+    
 }

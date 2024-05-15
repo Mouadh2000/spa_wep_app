@@ -32,20 +32,24 @@ function Illustration() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
       const response = await axios.post(
         "http://localhost:8000/api/login",
         formData
       );
       const { user, authorization } = response.data;
       const { access_token } = authorization;
-      // Storing tokens and user data in localStorage
+      
+  
+      // Storing access token in localStorage
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("user", JSON.stringify(user));
+
+  
       // Redirect to dashboard or desired route
       window.location.href = "/dashboard";
     } catch (error) {
@@ -61,6 +65,10 @@ function Illustration() {
       }
     }
   };
+  
+
+  
+  
 
   return (
     <IllustrationLayout
