@@ -1,63 +1,106 @@
 import React, { useState } from "react";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { createUser } from 'Api/userApi';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 export default function AddUserModal() {
 
-    const inputStyle = {
-      borderBottom: '1px solid rgba(0, 0, 0, 0.1)', // Border only at the bottom with low opacity
-      borderRadius: '5px', // Example border-radius
-      borderRight: 'none', // Remove right border
-      borderTop: 'none', // Remove top border
-      borderLeft: 'none', // Remove left border
-      outline: 'none', // Remove outline on focus
-      '&:hover': {
-        borderColor: 'rgba(0, 0, 0, 0.1)' // Ensure no hover effect
-      },
-      marginBottom: '20px' // Add bottom margin for spacing between inputs
-    };
-  // State for managing the visibility of the modal
+  const inputStyle = {
+    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+    borderRadius: '5px',
+    borderRight: 'none',
+    borderTop: 'none',
+    borderLeft: 'none',
+    outline: 'none',
+    '&:hover': {
+      borderColor: 'rgba(0, 0, 0, 0.1)'
+    },
+    marginBottom: '20px'
+  };
+
   const [modal, setModal] = useState(false);
+  const [name, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [create, setCreate] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [deletePermission, setDeletePermission] = useState(false);
 
+  const getPermissionLevel = () => {
+    if (create && update && deletePermission) {
+      return 'Editor';
+    } else if (create && update) {
+      return 'Refine';
+    } else if (create && deletePermission) {
+      return 'Edit';
+    } else if (update && deletePermission) {
+      return 'Emend';
+    } else if (create) {
+      return 'Create';
+    } else if (update) {
+      return 'Modify';
+    } else if (deletePermission) {
+      return 'Delete';
+    } else {
+      return 'Viewer';
+    }
+  };
 
-  // Function to toggle the modal visibility
   const toggleModal = () => {
     setModal(!modal);
   }
 
-  // Function to handle form submission
-  const handleSubmit = (event) => {
-    // Prevent default form submission behavior
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Here you can handle adding the category data
-    // For example, you can make an API call to add the category to the database
-    // After adding the category, you can close the modal
-    toggleModal();
+    try {
+      const newUser = await createUser({ name, email, password, permission_level: getPermissionLevel() });
+      if (newUser) {
+        console.log('User added successfully:', newUser);
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setCreate(false);
+        setUpdate(false);
+        setDeletePermission(false);
+        toggleModal();
+      } else {
+        console.error('Failed to add user.');
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+    }
   }
 
   return (
     <>
-      {/* Button to toggle the modal */}
       <button className="btn-modal btn btn-primary" onClick={toggleModal}>Add User</button>
 
-      {/* Modal */}
       <Modal isOpen={modal} toggle={toggleModal}>
         <ModalHeader toggle={toggleModal}>Add User</ModalHeader>
         <ModalBody>
-          {/* Form for adding a category */}
           <form onSubmit={handleSubmit}>
-            {/* Category input field */}
-            <input type="text" placeholder="username" style={inputStyle} />
-            <input type="email" placeholder="Description" style={inputStyle} />
-            <input type="password" placeholder="Password" style={inputStyle} />
-            <input type="text" placeholder="Staff role" style={inputStyle} />
-
+            <input type="text" placeholder="username" style={inputStyle} value={name} onChange={(e) => setUsername(e.target.value)} />
+            <input type="email" placeholder="Email" style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input type="password" placeholder="Password" style={inputStyle} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <div>
+              <label>
+                <input type="checkbox" checked={create} onChange={() => setCreate(!create)} /> Create
+              </label>
+            </div>
+            <div>
+              <label>
+                <input type="checkbox" checked={update} onChange={() => setUpdate(!update)} /> Update
+              </label>
+            </div>
+            <div>
+              <label>
+                <input type="checkbox" checked={deletePermission} onChange={() => setDeletePermission(!deletePermission)} /> Delete
+              </label>
+            </div>
+            <button type="submit" className="btn btn-primary">Add</button>
           </form>
         </ModalBody>
         <ModalFooter>
-          {/* Submit button */}
-          <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Add</button>
         </ModalFooter>
       </Modal>
     </>

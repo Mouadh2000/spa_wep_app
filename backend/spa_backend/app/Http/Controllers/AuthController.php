@@ -20,7 +20,10 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         if (!$token = Auth::attempt(credentials: $request->credentials())) {
-            throw new OAuthException(code: 'invalid_credentials_provided');
+            return response()->json([
+                'error' => 'Unauthorized',
+                'message' => 'Invalid username or password.',
+            ], 401);
         }
 
         return $this->responseWithToken(access_token: $token);

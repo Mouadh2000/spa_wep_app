@@ -8,7 +8,7 @@ use Firebase\JWT\Key;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
     /**
@@ -44,53 +44,69 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $token = $request->header('Authorization');
-
         $authenticated = $this->authenticateUser($request);
         $user = $request->user();
         $isStaff = $user->is_staff;
         $isAdmin = $user->is_admin;
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:8',
+        ]);
+        if ($validator->fails()) {
+            // Return detailed error messages
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+        
         if ($authenticated  && $isAdmin === 1 && $isStaff === 1) {
             $newUser = User::create($request->all());
             return response()->json($newUser, 201);
         } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Forbidden'], 403);
         }
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        $token = $request->header('Authorization');
-
         $authenticatedUser = $this->authenticateUser($request);
 
         $user = $request->user();
         $isStaff = $user->is_staff;
         $isAdmin = $user->is_admin;
+
+        $userToUpdate = User::find($id);
+
+        if(!$userToUpdate){
+            return response()->json(['error' => 'User not found'], 404);
+        }
 
         if ($authenticatedUser  && $isAdmin === 1 && $isStaff === 1) {
-            $user->update($request->all());
+            $userToUpdate->update($request->all());
             return response()->json($user, 200);
         } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Forbidden'], 403);
         }
     }
 
-    public function destroy(Request $request, User $user)
+    public function destroy(Request $request, $id)
     {
-        $token = $request->header('Authorization');
-
         $authenticatedUser = $this->authenticateUser($request);
 
         $user = $request->user();
         $isStaff = $user->is_staff;
         $isAdmin = $user->is_admin;
 
+        $userToDelete = User::find($id);
+
+        if (!$userToDelete) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
         if ($authenticatedUser && $isAdmin === 1 && $isStaff === 1) {
-            $user->delete();
+            $userToDelete->delete();
             return response()->json(null, 204);
         } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Forbidden'], 403);
         }
     }
 }

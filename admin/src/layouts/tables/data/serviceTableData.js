@@ -42,34 +42,16 @@ function Function({ job, org }) {
 }
 
 const serviceTableData = {
-  columns: [
+  servicecolumns: [
     { name: "Service Name", align: "left" },
     { name: "Description", align: "left" },
     { name: "Price", align: "center" },
     { name: "Assigned Staff", align: "center" },
+    { name: "Category Name", align: "center" },
     { name: "action", align: "center" },
   ],
 
-  rows: [
-    {
-      "Service Name": "Woman haircut",
-      Description: "Woman haircut",
-      Price: "120 DT",
-      "Assigned Staff": "ahlem ahlem",
-      action: (
-        <td>
-          <span
-            onClick={() => handleUpdate()}
-            style={{ cursor: "pointer", color: "green", }}
-          >
-            <i className="fas fa-edit"></i>
-          </span>
-          <span style={{ cursor: "pointer", color: "red", marginLeft: "10px" }} onClick={() => handleDelete()}>
-            <i className="fas fa-trash-alt"></i>
-          </span>{" "}
-        </td>
-      ),
-    }
+  servicerows: [
   ],
 };
 

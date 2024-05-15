@@ -48,6 +48,7 @@ const userTableData = {
     { name: "email", align: "left" },
     { name: "role", align: "center" },
     { name: "sign up date", align: "center" },
+    { name: "permission_level", align: "center" },
     { name: "action", align: "center" },
   ],
 

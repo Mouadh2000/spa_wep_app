@@ -16,6 +16,8 @@ import ArgonButton from "components/ArgonButton";
 // Authentication layout components
 import IllustrationLayout from "layouts/authentication/components/IllustrationLayout";
 import { getAllUsers } from "Api/userApi";
+import Swal from 'sweetalert2';
+import "../../../assets/css/sweetAlertStyle.css";
 // Image
 const bgImage =
   "https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg";
@@ -47,8 +49,16 @@ function Illustration() {
       // Redirect to dashboard or desired route
       window.location.href = "/dashboard";
     } catch (error) {
-      console.error("Login failed:", error.response.data);
-      // Handle login error, show error message to the user
+      if (error.response.status === 401) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Unauthorized',
+          text: 'Invalid username or password.',
+        });
+      } else {
+        console.error("Login failed:", error.response.data);
+        // Handle other login errors
+      }
     }
   };
 

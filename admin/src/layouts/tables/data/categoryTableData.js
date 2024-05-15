@@ -5,7 +5,7 @@ import Icon from "@mui/material/Icon";
 import ArgonBox from "components/ArgonBox";
 import ArgonTypography from "components/ArgonTypography";
 import ArgonProgress from "components/ArgonProgress";
-
+import { getAllCategories } from "Api/categoryApi";
 // Images
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 import logoInvesion from "assets/images/small-logos/logo-invision.svg";
@@ -34,32 +34,15 @@ const action = (
 );
 
 const categoryTableData = {
-  columns: [
+  categorycolumns: [
     { name: "categoryName", align: "left" },
     { name: "Description", align: "left" },
     { name: "Image", align: "left" },
     { name: "action", align: "center" },
   ],
 
-  rows: [
-    {
-      categoryName: "hairstyling",
-      Description: "hairstyling",
-      Image: "", // Since image is empty
-      action: (
-        <td>
-          <span
-            onClick={() => handleUpdate()}
-            style={{ cursor: "pointer", color: "green", }}
-          >
-            <i className="fas fa-edit"></i>
-          </span>
-          <span style={{ cursor: "pointer", color: "red", marginLeft: "10px" }} onClick={() => handleDelete()}>
-            <i className="fas fa-trash-alt"></i>
-          </span>{" "}
-        </td>
-      ),
-    },
+  categoryrows: [
+    
   ],
 };
 
