@@ -30,6 +30,7 @@ class AuthController extends Controller
 
         return $this->responseWithToken(access_token: $token);
     }
+    
 
     /**
      * Refresh a token.

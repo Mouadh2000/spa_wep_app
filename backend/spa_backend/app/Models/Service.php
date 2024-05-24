@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Category;
 use App\Models\User;
 
+
 class Service extends Model
 {
     protected $table = 'services';

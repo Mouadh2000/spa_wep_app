@@ -6,6 +6,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\AuthClientController;
+use App\Http\Controllers\ReservationController;
+
+
+
 
 
 
@@ -22,6 +27,14 @@ use App\Http\Controllers\ServiceController;
 
 Route::middleware('auth.token')->get('/me', function (Request $request) {
     return $request->user();
+});
+
+Route::controller(AuthClientController::class)->group(function ($router) {
+    Route::post('client/login', 'login')->name('client.login');
+    Route::post('client/logout', 'logout')->name('client.logout')->middleware('auth.token');
+    Route::post('client/register', 'register')->name('client.register');
+    Route::post('client/reservation/add', [ReservationController::class, 'store'])->name('reservation.store');
+
 });
 
 Route::controller(AuthController::class)->group(function ($router) {

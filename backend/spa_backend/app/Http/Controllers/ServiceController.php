@@ -36,13 +36,8 @@ class ServiceController extends Controller
 
     public function index(Request $request)
     {
-        if ($this->authenticateUser($request)) {
             $services = Service::All();
-            
             return response()->json($services);
-        } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
     }
 
     public function store(Request $request)

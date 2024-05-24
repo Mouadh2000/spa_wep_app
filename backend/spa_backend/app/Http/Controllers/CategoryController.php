@@ -35,7 +35,7 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        if ($this->authenticateUser($request)) {
+
             $categories = Category::all();
             
             // Iterate through categories to include image content
@@ -51,12 +51,9 @@ class CategoryController extends Controller
                     // Assign base64-encoded image content to image_content field
                     $category->image_content = $base64Image;
                 }
-            }
             
             return response()->json($categories);
-        } else {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        } 
     }
 
 
