@@ -1,45 +1,24 @@
-/*
-=========================================================
-* Material Kit 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// @mui material components
+import React, { useState } from "react";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
-
-// Material Kit 2 React components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
-
-// Material Kit 2 React examples
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import DefaultFooter from "examples/Footers/DefaultFooter";
-
-// Presentation page sections
 import Categories from "pages/Presentation/sections/Categories";
 import Services from "pages/Presentation/sections/Services";
-
-// Presentation page components
-
-// Routes
 import routes from "routes";
 import footerRoutes from "footer.routes";
-
-// Images
 import bgImage from "assets/images/bg-presentation.jpg";
 
 function Presentation() {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const handleCategoryClick = (categoryId) => {
+    setSelectedCategory(categoryId);
+  };
+
   return (
     <>
       <DefaultNavbar
@@ -99,8 +78,8 @@ function Presentation() {
           boxShadow: ({ boxShadows: { xxl } }) => xxl,
         }}
       >
-        <Categories />
-        <Services />
+        <Categories onCategoryClick={handleCategoryClick} /> {/* Pass the handler as a prop */}
+        {selectedCategory && <Services categoryId={selectedCategory} />}
       </Card>
       <MKBox pt={6} px={1} mt={6}>
         <DefaultFooter content={footerRoutes} />

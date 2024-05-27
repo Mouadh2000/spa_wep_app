@@ -17,11 +17,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
 // Material Kit 2 React example components
-import SimpleFooter from "examples/Footers/SimpleFooter";
 
 // Material Kit 2 React page layout routes
 // Images
-import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import bgImage from "assets/images/bg-sign-in-basic.jpg";
 import "assets/css/sweetAlertStyle.css";
 
 function SignUpBasic() {
@@ -50,8 +49,56 @@ function SignUpBasic() {
         text: "You have successfully signed up.",
         icon: "success",
         button: "OK",
+      }).then(() => {
+        // Redirect to sign-in page after successful registration
+        window.location.href = "/pages/authentication/sign-in";
       });
     } catch (error) {
+      if (error.response && error.response.data && error.response.data.errors) {
+        const errors = error.response.data.errors;
+
+        if (errors.email) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: errors.email.join(", "),
+            customClass: {
+              container: "custom-swal-container", // Use custom class
+            },
+          });
+        } else if (errors.password) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: errors.password.join(", "),
+            customClass: {
+              container: "custom-swal-container", // Use custom class
+            },
+          });
+        } else {
+          let errorMessage = "";
+          for (const key in errors) {
+            errorMessage += `${errors[key].join(", ")}\n`;
+          }
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: errorMessage,
+            customClass: {
+              container: "custom-swal-container", // Use custom class
+            },
+          });
+        }
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An error occurred while adding the user",
+          customClass: {
+            container: "custom-swal-container", // Use custom class
+          },
+        });
+      }
       console.error("Sign up failed", error);
     }
   };
@@ -84,7 +131,7 @@ function SignUpBasic() {
       />
       <MKBox px={1} width="100%" height="100vh" mx="auto" position="relative" zIndex={2}>
         <Grid container spacing={1} justifyContent="center" alignItems="center" height="100%">
-          <Grid item xs={11} sm={9} md={5} lg={4} xl={3}>
+          <Grid item xs={11} sm={9} md={8} lg={4} xl={3}>
             <Card>
               <MKBox
                 variant="gradient"
@@ -94,7 +141,7 @@ function SignUpBasic() {
                 mx={2}
                 mt={-3}
                 p={2}
-                mb={1}
+                mb={0}
                 textAlign="center"
               >
                 <MKTypography variant="h4" fontWeight="medium" color="white" mt={1}>
@@ -182,7 +229,7 @@ function SignUpBasic() {
                       </MKBox>
                     </FormControl>
                   </MKBox>
-                  <MKBox mt={4} mb={1}>
+                  <MKBox mt={3} mb={1}>
                     <MKButton variant="gradient" color="info" fullWidth onClick={handleSignUp}>
                       sign up
                     </MKButton>
@@ -192,9 +239,6 @@ function SignUpBasic() {
             </Card>
           </Grid>
         </Grid>
-      </MKBox>
-      <MKBox width="100%" position="absolute" zIndex={2} bottom="1.625rem">
-        <SimpleFooter light />
       </MKBox>
     </>
   );

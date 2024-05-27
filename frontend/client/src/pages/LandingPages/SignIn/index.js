@@ -33,14 +33,11 @@ import MKButton from "components/MKButton";
 import MKTypography from "components/MKTypography";
 
 // Material Kit 2 React example components
-import DefaultNavbar from "examples/Navbars/DefaultNavbar";
-import SimpleFooter from "examples/Footers/SimpleFooter";
 
 // Material Kit 2 React page layout routes
-import routes from "routes";
 
 // Images
-import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import bgImage from "assets/images/bg-sign-in-basic.jpg";
 
 function SignInBasic() {
   const [formData, setFormData] = useState({
@@ -67,17 +64,6 @@ function SignInBasic() {
   };
   return (
     <>
-      <DefaultNavbar
-        routes={routes}
-        action={{
-          type: "external",
-          route: "https://www.creative-tim.com/product/material-kit-react",
-          label: "free download",
-          color: "info",
-        }}
-        transparent
-        light
-      />
       <MKBox
         position="absolute"
         top={0}
@@ -160,9 +146,6 @@ function SignInBasic() {
             </Card>
           </Grid>
         </Grid>
-      </MKBox>
-      <MKBox width="100%" position="absolute" zIndex={2} bottom="1.625rem">
-        <SimpleFooter light />
       </MKBox>
     </>
   );

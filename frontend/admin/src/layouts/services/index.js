@@ -128,10 +128,10 @@ function Services() {
               </span>
               <span
                 style={{ cursor: "pointer", color: "red", marginLeft: "10px" }}
-                onClick={() => handleServiceDelete(category.id)}
+                onClick={() => handleServiceDelete(service.id)}
               >
                 <i className="fas fa-trash-alt"></i>
-              </span>{" "}
+              </span>
             </td>
           ),
         }));  

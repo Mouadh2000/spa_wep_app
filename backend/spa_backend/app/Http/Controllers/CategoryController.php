@@ -47,13 +47,10 @@ class CategoryController extends Controller
                     // If image exists, read its content and encode it as base64
                     $imageContent = Storage::disk('public')->get('category_images/' . $category->image);
                     $base64Image = base64_encode($imageContent);
-                    
-                    // Assign base64-encoded image content to image_content field
                     $category->image_content = $base64Image;
                 }
-            
+            } 
             return response()->json($categories);
-        } 
     }
 
 

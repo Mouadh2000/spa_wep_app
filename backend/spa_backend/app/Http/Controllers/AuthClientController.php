@@ -7,6 +7,8 @@ use App\Models\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
 
 class AuthClientController extends Controller
 {
@@ -17,14 +19,33 @@ class AuthClientController extends Controller
      * @return JsonResponse
      */
     public function register(Request $request): JsonResponse
-    {
-        $client = Client::create($request->all());
-        
+{
+    // Define validation rules
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:clients',
+        'password' => 'required|string|min:8',
+        'gender' => 'required|string',
+        'phone_number' => 'required|string|max:20',
+        'address' => 'required|string|max:255',
+    ]);
+
+    // Check if validation fails
+    if ($validator->fails()) {
         return response()->json([
-            'message' => 'Client registered successfully',
-            'client' => $client
-        ], 201);
+            'message' => 'Validation errors',
+            'errors' => $validator->errors()
+        ], 422);
     }
+
+    // Create the client
+    $client = Client::create($request->all());
+
+    return response()->json([
+        'message' => 'Client registered successfully',
+        'client' => $client
+    ], 201);
+}
 
 
     /**

@@ -1,30 +1,24 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-
-// @mui/material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-
-// Material Kit 2 React components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 
-// Presentation page components
-
-// API function to fetch categories
 const getAllCategories = async () => {
   try {
     const response = await axios.get("http://localhost:8000/api/category/views");
     return response.data;
   } catch (error) {
     console.error("Error fetching categories:", error);
-    return []; // Return an empty array or handle error as appropriate
+    return [];
   }
 };
 
-function Categories() {
+function Categories({ onCategoryClick }) {
   const [categoriesData, setCategoriesData] = useState([]);
 
   useEffect(() => {
@@ -36,10 +30,16 @@ function Categories() {
     fetchData();
   }, []);
 
+  const handleCardClick = (id) => {
+    onCategoryClick(id);
+  };
+
   const renderData = categoriesData.map(({ id, category_name, description, image_content }) => (
     <Grid container spacing={3} sx={{ mb: 10 }} key={id}>
       <Grid item xs={12} lg={4}>
-        <Card>
+        <Card onClick={() => handleCardClick(id)} sx={{ cursor: "pointer" }}>
+          {" "}
+          {/* Add cursor style here */}
           <CardContent>
             <MKBox position="sticky" top="100px" pb={{ xs: 2, lg: 6 }}>
               <MKTypography variant="h3" fontWeight="bold" mb={1}>
@@ -83,5 +83,10 @@ function Categories() {
     </MKBox>
   );
 }
+
+// Add propTypes for prop validation
+Categories.propTypes = {
+  onCategoryClick: PropTypes.func.isRequired,
+};
 
 export default Categories;

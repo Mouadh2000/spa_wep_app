@@ -104,5 +104,11 @@ class ServiceController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
     }
+    public function viewOpinion(Request $request)
+    {
+        $clients = Service::all()->pluck('opinion');
+        return response()->json($clients);
+        
+    }
 
 }

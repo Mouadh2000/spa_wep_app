@@ -38,10 +38,8 @@ import Dashboard from "layouts/dashboard";
 import Users from "layouts/users";
 import Services from "layouts/services";
 import Categories from "layouts/categories";
-import Billing from "layouts/billing";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
-import SignUp from "layouts/authentication/sign-up";
 import ArgonBox from "components/ArgonBox";
 
 
@@ -84,14 +82,6 @@ const routes = [
     ),
     component: <Categories />,
   },
-  {
-    type: "route",
-    name: "Billing",
-    key: "billing",
-    route: "/billing",
-    icon: <ArgonBox component="i" color="success" fontSize="14px" className="ni ni-credit-card" />,
-    component: <Billing />,
-  },
   { type: "title", title: "Account Pages", key: "account-pages" },
   {
     type: "route",
@@ -110,14 +100,6 @@ const routes = [
       <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-single-copy-04" />
     ),
     component: <SignIn />,
-  },
-  {
-    type: "route",
-    name: "Sign Up",
-    key: "sign-up",
-    route: "/authentication/sign-up",
-    icon: <ArgonBox component="i" color="info" fontSize="14px" className="ni ni-collection" />,
-    component: <SignUp />,
   },
 ];
 

@@ -73,7 +73,6 @@ function Illustration() {
   return (
     <IllustrationLayout
       title="Sign In"
-      description="Enter your email and password to sign in"
       illustration={{
         image: bgImage,
         title: '"Attention is the new currency"',
@@ -106,20 +105,6 @@ function Illustration() {
           <ArgonButton type="submit" color="info" size="large" fullWidth>
             Sign In
           </ArgonButton>
-        </ArgonBox>
-        <ArgonBox mt={3} textAlign="center">
-          <ArgonTypography variant="button" color="text" fontWeight="regular">
-            Don&apos;t have an account?{" "}
-            <ArgonTypography
-              component={Link}
-              to="/authentication/sign-up"
-              variant="button"
-              color="info"
-              fontWeight="medium"
-            >
-              Sign up
-            </ArgonTypography>
-          </ArgonTypography>
         </ArgonBox>
       </ArgonBox>
     </IllustrationLayout>

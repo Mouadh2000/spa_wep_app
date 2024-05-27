@@ -25,6 +25,8 @@ export default function AddUserModal() {
   const [create, setCreate] = useState(false);
   const [update, setUpdate] = useState(false);
   const [deletePermission, setDeletePermission] = useState(false);
+  const [viewClientPermission, setViewClientPermission] = useState(false);
+
 
   const getPermissionLevel = () => {
     if (create && update && deletePermission) {
@@ -53,7 +55,13 @@ export default function AddUserModal() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const newUser = await createUser({ name, email, password, permission_level: getPermissionLevel() });
+      const newUser = await createUser({
+        name,
+        email,
+        password,
+        permission_level: getPermissionLevel(),
+        view_client_permission: viewClientPermission
+      });
       if (newUser) {
         console.log('User added successfully:', newUser);
         setUsername('');
@@ -62,6 +70,7 @@ export default function AddUserModal() {
         setCreate(false);
         setUpdate(false);
         setDeletePermission(false);
+        setViewClientPermission(false); // Reset the new checkbox state
         toggleModal();
       } else {
         console.error('Failed to add user.');
@@ -70,7 +79,7 @@ export default function AddUserModal() {
       console.error('Error adding user:', error);
     }
   }
-
+  
   return (
     <>
       <button className="btn-modal btn btn-primary" onClick={toggleModal}>Add User</button>
@@ -95,6 +104,11 @@ export default function AddUserModal() {
             <div>
               <label>
                 <input type="checkbox" checked={deletePermission} onChange={() => setDeletePermission(!deletePermission)} /> Delete
+              </label>
+            </div>
+            <div>
+              <label>
+                <input type="checkbox" checked={viewClientPermission} onChange={() => setViewClientPermission(!viewClientPermission)} /> View Client Permission
               </label>
             </div>
             <button type="submit" className="btn btn-primary">Add</button>

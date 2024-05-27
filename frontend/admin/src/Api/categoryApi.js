@@ -4,13 +4,7 @@ import "../assets/css/sweetAlertStyle.css";
 
 export const getAllCategories = async () => {
     try {
-        const token = localStorage.getItem('access_token'); // Get token from localStorage
-
-        const response = await axios.get('http://localhost:8000/api/category/views', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await axios.get('http://localhost:8000/api/category/views');
         return response.data;
     } catch (error) {
         console.error('Error fetching categories:', error);

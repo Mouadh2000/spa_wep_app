@@ -85,6 +85,7 @@ function Categories() {
     const fetchData = async () => {
       try {
         const categoryData = await getAllCategories();
+        console.log(categoryData);
         categoryTableData.categoryrows = categoryData.map(category => ({
           categoryName: category.category_name,
           Description: category.description,

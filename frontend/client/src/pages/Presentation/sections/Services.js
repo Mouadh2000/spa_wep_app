@@ -1,62 +1,82 @@
-/*
-=========================================================
-* Material Kit 2 React - v2.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-kit-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
-// react-router-dom components
-import Swal from "sweetalert2";
-import "assets/css/sweetAlertStyle.css";
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import Swal from "sweetalert2";
 import axios from "axios";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import MKButton from "components/MKButton";
-
-// @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-
-// Material Kit 2 React components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
+import OpinionForm from "./OpinionForm"; // Import the OpinionForm component
 
-// Presentation page components
-
-// Data
-
-const getAllServices = async () => {
+// Fetch client opinions from the API
+const getClientsOpinion = async () => {
   try {
-    const response = await axios.get("http://localhost:8000/api/service/views");
+    const response = await axios.get("http://localhost:8000/api/clients/opinions");
     return response.data;
   } catch (error) {
-    console.error("Error fetching services:", error);
-    return []; // Return an empty array or handle error as appropriate
+    console.error("Error fetching client opinions:", error);
+    return {}; // Return an empty object or handle error as appropriate
   }
 };
 
-function Services() {
+function Services({ categoryId }) {
   const [servicesData, setServicesData] = useState([]);
+  const [clientsOpinions, setClientsOpinions] = useState({});
+  const [showDetails, setShowDetails] = useState({});
+
+  const fetchClientsOpinions = async () => {
+    try {
+      // Fetch client opinions
+      const opinions = await getClientsOpinion();
+      setClientsOpinions(opinions);
+    } catch (error) {
+      console.error("Error fetching client opinions:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      const services = await getAllServices();
-      setServicesData(services);
+      try {
+        // Fetch services
+        const response = await axios.get("http://localhost:8000/api/service/views");
+        const services = response.data;
+        const filteredServices = services.filter((service) => service.category_id === categoryId);
+        setServicesData(filteredServices);
+        // Set initial state for showDetails
+        const initialDetailsState = {};
+        filteredServices.forEach(({ id }) => {
+          initialDetailsState[id] = false;
+        });
+        setShowDetails(initialDetailsState);
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
     };
 
-    fetchData();
-  }, []);
+    if (categoryId) {
+      fetchData();
+      fetchClientsOpinions();
+    }
+  }, [categoryId]);
+
   const handleReservation = async (serviceId) => {
     const clientData = JSON.parse(localStorage.getItem("user"));
+
+    if (!clientData) {
+      Swal.fire({
+        icon: "error",
+        title: "Authentication Needed",
+        text: "You need to be authenticated to make a reservation.",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.href = "/pages/authentication/sign-in";
+      });
+      return;
+    }
+
     const clientId = clientData.id;
     const accessToken = localStorage.getItem("access_token");
     const requestData = {
@@ -66,6 +86,7 @@ function Services() {
     const headers = {
       Authorization: `Bearer ${accessToken}`,
     };
+
     try {
       await axios.post("http://localhost:8000/api/client/reservation/add", requestData, {
         headers,
@@ -78,24 +99,64 @@ function Services() {
       });
     } catch (error) {
       console.error("Error making reservation:", error);
-      alert("Failed to make reservation. Please try again later.");
+      Swal.fire({
+        icon: "error",
+        title: "Reservation Failed",
+        text: "Failed to make reservation. Please try again later.",
+        confirmButtonText: "OK",
+      });
     }
   };
+
+  const toggleDetails = (id) => {
+    setShowDetails((prevDetails) => ({
+      ...prevDetails,
+      [id]: !prevDetails[id],
+    }));
+  };
+
   const renderData = servicesData.map(({ id, service_name, description, price }) => (
     <Grid container spacing={3} sx={{ mb: 10 }} key={id}>
-      <Grid item xs={12} lg={4}>
+      <Grid item xs={12} lg={7}>
         <Card>
           <CardContent>
             <MKBox position="sticky" top="100px" pb={{ xs: 2, lg: 6 }}>
               <MKTypography variant="h3" fontWeight="bold" mb={1}>
                 {service_name}
               </MKTypography>
-              <MKTypography variant="body2" fontWeight="regular" color="secondary" mb={1} pr={2}>
-                description: {description}
-              </MKTypography>
-              <MKTypography variant="body2" fontWeight="regular" color="secondary" mb={1} pr={2}>
-                price: {price} DT
-              </MKTypography>
+              {showDetails[id] && (
+                <>
+                  <MKTypography
+                    variant="body2"
+                    fontWeight="regular"
+                    color="secondary"
+                    mb={1}
+                    pr={2}
+                  >
+                    Description: {description}
+                  </MKTypography>
+                  <MKTypography
+                    variant="body2"
+                    fontWeight="regular"
+                    color="secondary"
+                    mb={1}
+                    pr={2}
+                  >
+                    Price: {price} DT
+                  </MKTypography>
+                  <MKTypography
+                    variant="body2"
+                    fontWeight="regular"
+                    color="secondary"
+                    mb={1}
+                    pr={2}
+                  >
+                    Clients Opinion: {clientsOpinions[id]}
+                  </MKTypography>
+                  <OpinionForm serviceId={id} onSubmit={fetchClientsOpinions} />{" "}
+                  {/* Add the OpinionForm */}
+                </>
+              )}
               <MKButton
                 variant="gradient"
                 color="info"
@@ -103,6 +164,15 @@ function Services() {
                 fullWidth
               >
                 Make a Reservation
+              </MKButton>
+              <MKButton
+                variant="outlined"
+                color="info"
+                onClick={() => toggleDetails(id)}
+                fullWidth
+                style={{ marginTop: "10px" }}
+              >
+                {showDetails[id] ? "Hide Details" : "Details"}
               </MKButton>
             </MKBox>
           </CardContent>
@@ -143,5 +213,10 @@ function Services() {
     </MKBox>
   );
 }
+
+// Add propTypes for prop validation
+Services.propTypes = {
+  categoryId: PropTypes.number.isRequired,
+};
 
 export default Services;

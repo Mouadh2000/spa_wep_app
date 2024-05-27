@@ -18,6 +18,22 @@ export const getAllUsers = async () => {
     }
 };
 
+export const getAllClients = async () => {
+    try {
+        const token = localStorage.getItem('access_token'); // Get token from localStorage
+
+        const response = await axios.get('http://localhost:8000/api/clients/views/', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching clients:', error);
+        return []; // Return an empty array or handle error as appropriate
+    }
+};
+
 export const createUser = async (userData) => {
     try {
         const token = localStorage.getItem('access_token');
