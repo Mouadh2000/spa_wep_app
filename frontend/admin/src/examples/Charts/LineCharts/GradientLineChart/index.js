@@ -1,21 +1,6 @@
-/**
-=========================================================
-* Argon Dashboard 2 MUI - v3.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-material-ui
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useRef, useEffect, useState, useMemo } from "react";
 
-// porp-types is a library for typechecking of props
+// prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
 
 // react-chartjs-2 components
@@ -61,7 +46,7 @@ function GradientLineChart({ title, description, height, chart }) {
         }))
       : [];
 
-    setChartData(configs(chart.labels || [], chartDatasets));
+    setChartData(configs(chart.labels || [], chartDatasets, chart.options));
   }, [chart]);
 
   const renderChart = (
@@ -106,7 +91,7 @@ GradientLineChart.propTypes = {
   title: PropTypes.string,
   description: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  chart: PropTypes.objectOf(PropTypes.array).isRequired,
+  chart: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default GradientLineChart;

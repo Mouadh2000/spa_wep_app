@@ -104,11 +104,18 @@ class ServiceController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
     }
-    public function viewOpinion(Request $request)
+
+    public function countServices(Request $request)
     {
-        $clients = Service::all()->pluck('opinion');
-        return response()->json($clients);
-        
+        $authenticated = $this->authenticateUser($request);
+        if ($authenticated) {
+            $serviceCount = Service::count();
+            return response()->json(['service_count' => $serviceCount]);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
     }
+
+    
 
 }

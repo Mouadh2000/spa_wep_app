@@ -122,24 +122,7 @@ function DetailedStaticsCard({ bgColor, title, count, percentage, icon, directio
               </Grid>
             ) : null}
           </Grid>
-          <ArgonTypography
-            display="flex"
-            alignItems="center"
-            variant="button"
-            fontWeight="bold"
-            color={percentage.color}
-          >
-            {percentage.count}
-            <ArgonTypography
-              variant="body2"
-              fontWeight="regular"
-              color={bgColor === "white" ? "text" : "white"}
-              ml={0.5}
-              mt={-0.125}
-            >
-              {percentage.text}
-            </ArgonTypography>
-          </ArgonTypography>
+          
         </ArgonBox>
       </ArgonBox>
     </Card>

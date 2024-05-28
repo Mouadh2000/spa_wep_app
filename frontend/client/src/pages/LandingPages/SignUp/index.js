@@ -46,7 +46,7 @@ function SignUpBasic() {
       });
       Swal.fire({
         title: "Success!",
-        text: "You have successfully signed up.",
+        text: "You have successfully signed up. Please check your email to verify your account.",
         icon: "success",
         button: "OK",
       }).then(() => {

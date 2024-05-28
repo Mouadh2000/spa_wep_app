@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class Reservation extends Model
 {
     protected $table = 'reservations';
-    protected $fillable = ['client_id', 'service_id'];
+    protected $fillable = ['client_id', 'service_id', 'date'];
 
     public function client()
     {

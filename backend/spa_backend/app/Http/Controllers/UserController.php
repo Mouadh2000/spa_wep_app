@@ -109,4 +109,15 @@ class UserController extends Controller
             return response()->json(['error' => 'Forbidden'], 403);
         }
     }
+
+    public function countUsers(Request $request)
+    {
+        $authenticated = $this->authenticateUser($request);
+        if ($authenticated) {
+            $userCount = User::count();
+            return response()->json(['user_count' => $userCount]);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    }
 }

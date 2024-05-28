@@ -25,6 +25,8 @@ class Client extends Authenticatable implements JWTSubject
         'gender',
         'phone_number',
         'address',
+        'verified_email',
+        'verification_token',
     ];
 
     /**
@@ -35,6 +37,7 @@ class Client extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_token',
     ];
 
     /**
@@ -65,5 +68,10 @@ class Client extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
     }
 }

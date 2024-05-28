@@ -10,6 +10,8 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+
 
 class ClientController extends Controller
 {
@@ -46,18 +48,68 @@ class ClientController extends Controller
         }
     }
 
-    public function addOpinion(Request $request)
+    /**
+     * Get the count of clients.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function countClients(Request $request)
     {
-        $request->validate([
-            'id' => 'required|exists:clients,id',
-            'opinion' => 'required|string',
+        $authenticated = $this->authenticateUser($request);
+        if ($authenticated) {
+            $clientCount = Client::count();
+            return response()->json(['client_count' => $clientCount]);
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    }
+
+    /**
+     * Update user profile.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $id)
+    {
+        $authenticatedUser = $this->authenticateUser($request);
+        $clientToUpdate = Client::find($id);
+
+        if (!$clientToUpdate) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Validating email and password
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'old_password' => 'nullable|min:8',
+            'new_password' => 'nullable|min:8',
         ]);
 
-        $client = Client::findOrFail($request->input('id'));
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->first()], 422);
+        }
 
-        $client->opinion = $request->input('opinion');
-        $client->save();
+        // Check if old password is provided and matches the hashed password in the database
+        if ($request->has('old_password')) {
+            if (!Hash::check($request->old_password, $clientToUpdate->password)) {
+                return response()->json(['error' => 'Old password does not match'], 422);
+            }
+        }
 
-        return response()->json(['message' => 'Opinion added successfully'], 200);
+        // Update user data
+        $clientToUpdate->fill($request->only(['email', 'password', /* add other fields here if needed */ ]));
+        
+        // Optionally, you can hash the new password before saving
+        if ($request->has('new_password')) {
+            $clientToUpdate->password = bcrypt($request->new_password);
+        }
+
+        $clientToUpdate->save();
+
+        return response()->json("updated", 200);
     }
+
+    
 }

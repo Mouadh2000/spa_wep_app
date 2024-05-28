@@ -34,31 +34,45 @@ function Categories({ onCategoryClick }) {
     onCategoryClick(id);
   };
 
-  const renderData = categoriesData.map(({ id, category_name, description, image_content }) => (
-    <Grid container spacing={3} sx={{ mb: 10 }} key={id}>
-      <Grid item xs={12} lg={4}>
-        <Card onClick={() => handleCardClick(id)} sx={{ cursor: "pointer" }}>
-          {" "}
-          {/* Add cursor style here */}
-          <CardContent>
-            <MKBox position="sticky" top="100px" pb={{ xs: 2, lg: 6 }}>
-              <MKTypography variant="h3" fontWeight="bold" mb={1}>
-                {category_name}
-              </MKTypography>
-              <MKTypography variant="body2" fontWeight="regular" color="secondary" mb={1} pr={2}>
-                <img
-                  src={`data:image/png;base64,${image_content}`}
-                  alt={category_name}
-                  style={{ width: "100%", height: "auto" }}
-                />
-              </MKTypography>
-              <MKTypography variant="body2" fontWeight="regular" color="secondary" mb={1} pr={2}>
-                {description}
-              </MKTypography>
-            </MKBox>
-          </CardContent>
-        </Card>
-      </Grid>
+  // Chunk categories into rows of three
+  const chunkArray = (arr, size) => {
+    const result = [];
+    for (let i = 0; i < arr.length; i += size) {
+      result.push(arr.slice(i, i + size));
+    }
+    return result;
+  };
+
+  const categoryChunks = chunkArray(categoriesData, 3);
+
+  const renderData = categoryChunks.map((categoryRow, rowIndex) => (
+    <Grid container spacing={3} sx={{ mb: 10 }} key={`row-${rowIndex}`}>
+      {categoryRow.map(({ id, category_name, description, image_content }) => (
+        <Grid item xs={12} md={4} key={id}>
+          <Card
+            onClick={() => handleCardClick(id)}
+            sx={{ cursor: "pointer", display: "flex", flexDirection: "column", height: "100%" }}
+          >
+            <CardContent sx={{ flex: 1 }}>
+              <MKBox sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                <MKTypography variant="h3" fontWeight="bold" mb={1}>
+                  {category_name}
+                </MKTypography>
+                <MKTypography variant="body2" fontWeight="regular" color="secondary" mb={1} pr={2}>
+                  <img
+                    src={`data:image/png;base64,${image_content}`}
+                    alt={category_name}
+                    style={{ width: "100%", height: "auto", marginBottom: "10px" }}
+                  />
+                </MKTypography>
+                <MKTypography variant="body2" fontWeight="regular" color="secondary" mb={1} pr={2}>
+                  {description}
+                </MKTypography>
+              </MKBox>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
     </Grid>
   ));
 

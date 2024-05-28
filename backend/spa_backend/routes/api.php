@@ -47,10 +47,11 @@ Route::controller(AuthController::class)->group(function ($router) {
     Route::post('logout', 'logout')->name('logout')->middleware('auth.token');
     //User Route
     Route::get('users/views', [UserController::class, 'index'])->name('users.index');
-
     Route::post('users/create', [UserController::class, 'store'])->name('users.store');
     Route::put('users/edit/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('users/delete/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('user/count', [UserController::class, 'countUsers'])->name('users.count');
+
     //Category Route
     Route::get('category/views', [CategoryController::class, 'index'])->name('category.index');
     Route::post('category/create', [CategoryController::class, 'store'])->name('category.store');
@@ -60,9 +61,16 @@ Route::controller(AuthController::class)->group(function ($router) {
     Route::post('service/create', [ServiceController::class, 'store'])->name('service.store');
     Route::put('service/edit/{service}', [ServiceController::class, 'update'])->name('service.update');
     Route::delete('service/delete/{service}', [ServiceController::class, 'destroy'])->name('service.destroy');
+    Route::get('service/count', [serviceController::class, 'countServices'])->name('service.count');
+
     //Client Route
     Route::get('clients/views', [ClientController::class, 'index'])->name('clients.index');
-    
-
+    Route::get('client/count', [ClientController::class, 'countClients'])->name('clients.count');
+    Route::post('client/update/{client}', [ClientController::class, 'update'])->name('clients.update');
+    Route::get('client/verify/{token}', [AuthClientController::class, 'verifyEmail']);
+    //Reservation Route
+    Route::get('reservations', [ReservationController::class, 'index'])->name('reservation.index');
+    Route::get('reservations/monthly', [ReservationController::class, 'getMonthlyReservations'])->name('reservation.monthcount');
+    Route::get('reservations/total-price', [ReservationController::class, 'calculateTotalPrice'])->name('reservation.calculprice');
 
 });

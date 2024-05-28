@@ -1,28 +1,14 @@
-/**
-=========================================================
-* Argon Dashboard 2 MUI - v3.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-material-ui
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // Argon Dashboard 2 MUI base styles
 import typography from "assets/theme/base/typography";
 
-function configs(labels, datasets) {
+function configs(labels, datasets, options) {
   return {
     data: {
       labels,
       datasets: [...datasets],
     },
     options: {
+      ...options,
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
@@ -36,6 +22,7 @@ function configs(labels, datasets) {
       },
       scales: {
         y: {
+          ...options.scales.y,
           grid: {
             drawBorder: false,
             display: true,
@@ -44,6 +31,7 @@ function configs(labels, datasets) {
             borderDash: [5, 5],
           },
           ticks: {
+            ...options.scales.y.ticks,
             display: true,
             padding: 10,
             color: "#b2b9bf",

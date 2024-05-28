@@ -52,12 +52,20 @@ function Services() {
   const [serviceRows, setServiceRows] = useState([]);
   let { servicecolumns, servicerows } = serviceTableData;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState([]); 
+  const [selectedService, setSelectedService] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
+  const handleSearchInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
 
+  const filteredUserRows = servicerows.filter((row) =>
+  row['Service Name'].toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   const handleServiceUpdate = (service) => {
     console.log(service);
@@ -155,6 +163,16 @@ function Services() {
           <Card>
             <ArgonBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
               <ArgonTypography variant="h6">Services</ArgonTypography>
+              <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
+                <FormGroup className="mb-0">
+                  <InputGroup className="input-group-alternative" style={{ backgroundColor: 'transparent', borderColor: '#5e72e4', }}>
+                      <InputGroupText style={{ color: '#5e72e4' }} >
+                        <i className="fas fa-search" />
+                      </InputGroupText>
+                      <Input type="text" style={{ color: '#5e72e4' }} placeholder="Search" value={searchQuery} onChange={handleSearchInputChange} />
+                  </InputGroup>
+                </FormGroup>
+              </Form>
               <AddServiceModal isOpen={isModalOpen} toggle={toggleModal} className="btn btn-primary" />
 
             </ArgonBox>

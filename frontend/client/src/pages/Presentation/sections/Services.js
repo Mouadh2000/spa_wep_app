@@ -10,6 +10,9 @@ import Grid from "@mui/material/Grid";
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
 import OpinionForm from "./OpinionForm"; // Import the OpinionForm component
+import DatePicker from "react-datepicker"; // Import DatePicker
+import "react-datepicker/dist/react-datepicker.css"; // Import DatePicker CSS
+import { isSunday } from "date-fns";
 
 // Fetch client opinions from the API
 const getClientsOpinion = async () => {
@@ -26,6 +29,8 @@ function Services({ categoryId }) {
   const [servicesData, setServicesData] = useState([]);
   const [clientsOpinions, setClientsOpinions] = useState({});
   const [showDetails, setShowDetails] = useState({});
+  const [selectedDate, setSelectedDate] = useState({});
+  const [showDatePicker, setShowDatePicker] = useState({});
 
   const fetchClientsOpinions = async () => {
     try {
@@ -47,10 +52,13 @@ function Services({ categoryId }) {
         setServicesData(filteredServices);
         // Set initial state for showDetails
         const initialDetailsState = {};
+        const initialDatePickerState = {};
         filteredServices.forEach(({ id }) => {
           initialDetailsState[id] = false;
+          initialDatePickerState[id] = false;
         });
         setShowDetails(initialDetailsState);
+        setShowDatePicker(initialDatePickerState);
       } catch (error) {
         console.error("Error fetching services:", error);
       }
@@ -77,11 +85,22 @@ function Services({ categoryId }) {
       return;
     }
 
+    if (!selectedDate[serviceId]) {
+      Swal.fire({
+        icon: "error",
+        title: "Date Needed",
+        text: "Please select a date for your reservation.",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     const clientId = clientData.id;
     const accessToken = localStorage.getItem("access_token");
     const requestData = {
       service_id: serviceId,
       client_id: clientId,
+      reservation_date: selectedDate[serviceId].toISOString(),
     };
     const headers = {
       Authorization: `Bearer ${accessToken}`,
@@ -91,6 +110,7 @@ function Services({ categoryId }) {
       await axios.post("http://localhost:8000/api/client/reservation/add", requestData, {
         headers,
       });
+      console.log(requestData);
       Swal.fire({
         icon: "success",
         title: "Reservation Successful",
@@ -115,69 +135,116 @@ function Services({ categoryId }) {
     }));
   };
 
-  const renderData = servicesData.map(({ id, service_name, description, price }) => (
-    <Grid container spacing={3} sx={{ mb: 10 }} key={id}>
-      <Grid item xs={12} lg={7}>
-        <Card>
-          <CardContent>
-            <MKBox position="sticky" top="100px" pb={{ xs: 2, lg: 6 }}>
-              <MKTypography variant="h3" fontWeight="bold" mb={1}>
-                {service_name}
-              </MKTypography>
-              {showDetails[id] && (
-                <>
-                  <MKTypography
-                    variant="body2"
-                    fontWeight="regular"
-                    color="secondary"
-                    mb={1}
-                    pr={2}
-                  >
-                    Description: {description}
-                  </MKTypography>
-                  <MKTypography
-                    variant="body2"
-                    fontWeight="regular"
-                    color="secondary"
-                    mb={1}
-                    pr={2}
-                  >
-                    Price: {price} DT
-                  </MKTypography>
-                  <MKTypography
-                    variant="body2"
-                    fontWeight="regular"
-                    color="secondary"
-                    mb={1}
-                    pr={2}
-                  >
-                    Clients Opinion: {clientsOpinions[id]}
-                  </MKTypography>
-                  <OpinionForm serviceId={id} onSubmit={fetchClientsOpinions} />{" "}
-                  {/* Add the OpinionForm */}
-                </>
-              )}
-              <MKButton
-                variant="gradient"
-                color="info"
-                onClick={() => handleReservation(id)}
-                fullWidth
-              >
-                Make a Reservation
-              </MKButton>
-              <MKButton
-                variant="outlined"
-                color="info"
-                onClick={() => toggleDetails(id)}
-                fullWidth
-                style={{ marginTop: "10px" }}
-              >
-                {showDetails[id] ? "Hide Details" : "Details"}
-              </MKButton>
-            </MKBox>
-          </CardContent>
-        </Card>
-      </Grid>
+  const toggleDatePicker = (id) => {
+    setShowDatePicker((prevShowDatePicker) => ({
+      ...prevShowDatePicker,
+      [id]: !prevShowDatePicker[id],
+    }));
+  };
+
+  const handleDateChange = (date, serviceId) => {
+    setSelectedDate((prevDates) => ({
+      ...prevDates,
+      [serviceId]: date,
+    }));
+  };
+
+  // Chunk services into rows of three
+  const chunkArray = (arr, size) => {
+    const result = [];
+    for (let i = 0; i < arr.length; i += size) {
+      result.push(arr.slice(i, i + size));
+    }
+    return result;
+  };
+
+  const serviceChunks = chunkArray(servicesData, 3);
+
+  const renderData = serviceChunks.map((serviceRow, rowIndex) => (
+    <Grid container spacing={3} sx={{ mb: 10 }} key={`row-${rowIndex}`}>
+      {serviceRow.map(({ id, service_name, description, price }) => (
+        <Grid item xs={12} md={6} key={id}>
+          <Card sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+            <CardContent sx={{ flex: 1 }}>
+              <MKBox sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                <MKTypography variant="h3" fontWeight="bold" mb={1}>
+                  {service_name}
+                </MKTypography>
+                {showDetails[id] && (
+                  <>
+                    <MKTypography
+                      variant="body2"
+                      fontWeight="regular"
+                      color="secondary"
+                      mb={1}
+                      pr={2}
+                    >
+                      Description: {description}
+                    </MKTypography>
+                    <MKTypography
+                      variant="body2"
+                      fontWeight="regular"
+                      color="secondary"
+                      mb={1}
+                      pr={2}
+                    >
+                      Price: {price} DT
+                    </MKTypography>
+                    <MKTypography
+                      variant="body2"
+                      fontWeight="regular"
+                      color="secondary"
+                      mb={1}
+                      pr={2}
+                    >
+                      Clients Opinion: {clientsOpinions[id]}
+                    </MKTypography>
+                    <OpinionForm serviceId={id} onSubmit={fetchClientsOpinions} />{" "}
+                    {/* Add the OpinionForm */}
+                  </>
+                )}
+                <MKButton
+                  variant="outlined"
+                  color="info"
+                  onClick={() => toggleDetails(id)}
+                  fullWidth
+                  style={{ marginTop: "10px" }}
+                >
+                  {showDetails[id] ? "Hide Details" : "Details"}
+                </MKButton>
+                <MKButton
+                  variant="outlined"
+                  color="info"
+                  onClick={() => toggleDatePicker(id)}
+                  fullWidth
+                  style={{ marginTop: "10px" }}
+                >
+                  {showDatePicker[id] ? "Cancel Date" : "Select Date"}
+                </MKButton>
+                {showDatePicker[id] && (
+                  <DatePicker
+                    selected={selectedDate[id]}
+                    onChange={(date) => handleDateChange(date, id)}
+                    filterDate={(date) => !isSunday(date)}
+                    minDate={new Date()}
+                    placeholderText="Select a reservation date"
+                    inline
+                  />
+                )}
+                <MKButton
+                  variant="gradient"
+                  color="info"
+                  onClick={() => handleReservation(id)}
+                  fullWidth
+                  style={{ marginTop: "10px" }}
+                >
+                  Make a Reservation
+                </MKButton>
+              </MKBox>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
     </Grid>
   ));
 

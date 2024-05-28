@@ -36,10 +36,8 @@ import PlaceholderCard from "examples/Cards/PlaceholderCard";
 
 // Overview page components
 import Header from "layouts/profile/components/Header";
-import PlatformSettings from "layouts/profile/components/PlatformSettings";
 
 // Data
-import profilesListData from "layouts/profile/data/profilesListData";
 
 // Images
 import homeDecor1 from "assets/images/home-decor-1.jpg";
@@ -70,16 +68,12 @@ function Overview() {
       <ArgonBox mt={5} mb={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} xl={4}>
-            <PlatformSettings />
-          </Grid>
-          <Grid item xs={12} md={6} xl={4}>
             <ProfileInfoCard
               title="profile information"
               description={"Hi, I'm "  + user.name + " : If you can't decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."}
               info={{
                 fullName: user.name,
                 email: user.email,
-                location: "USA",
               }}
               social={[
                 {
@@ -100,9 +94,6 @@ function Overview() {
               ]}
               action={{ route: "", tooltip: "Edit Profile" }}
             />
-          </Grid>
-          <Grid item xs={12} xl={4}>
-            <ProfilesList title="conversations" profiles={profilesListData} />
           </Grid>
         </Grid>
       </ArgonBox>

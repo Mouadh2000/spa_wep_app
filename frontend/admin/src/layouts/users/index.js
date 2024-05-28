@@ -41,22 +41,18 @@ import AddUserModal from 'components/Modals/AddUserModal';
 import UpdateUserModal from 'components/Modals/UpdateUserModal';
 // Data
 import userTableData from './data/userTableData';
-import clientTableData from './data/clientTableData';
 import { getAllUsers, updateUser, deleteUser } from 'Api/userApi';
-import { getAllClients } from 'Api/userApi';
 import { Description } from '@mui/icons-material';
 
 
 
 function Users() {
   const [usersRows, setUsersRows] = useState([]);
-  const [clientsRows, setClientsRows] = useState([]);
   let { usercolumns, usersrows } = userTableData;
-  let { clientcolumns, clientsrows } = clientTableData;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState([]); 
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchClientQuery, setSearchClientQuery] = useState('');
+  
   const formatPermissionLevel = (permissionLevel) => {
     switch (permissionLevel) {
       case 'Editor':
@@ -88,16 +84,12 @@ function Users() {
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
   };
-  const handleSearchClientInputChange = (event) => {
-    setSearchClientQuery(event.target.value);
-  };
+  
 
   const filteredUserRows = usersrows.filter((row) =>
   row['user Name'].toLowerCase().includes(searchQuery.toLowerCase())
 );
-const filteredClientRows = clientsrows.filter((row) =>
-  row['user Name'].toLowerCase().includes(searchClientQuery.toLowerCase())
-);
+
 
 const updateUsers = async () => {
   try {
@@ -107,20 +99,9 @@ const updateUsers = async () => {
     console.error('Error fetching users:', error);
   }
 };
-const updateClients = async () => {
-  try {
-    const clientData = await getAllClients();
-    setClientsRows(clientData);
-  } catch (error) {
-    console.error('Error fetching clients:', error);
-  }
-};
 
 useEffect(() => {
   updateUsers();
-}, []);
-useEffect(() => {
-  updateClients();
 }, []);
 
   const handleUserUpdate = (user) => {
@@ -188,36 +169,6 @@ useEffect(() => {
 
     fetchData();
   }, []); 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const clientsData = await getAllClients();
-        const clientColumns = [
-          { name: "user Name", align: "left" },
-          { name: "email", align: "left" },
-          { name: "phone number", align: "center" },
-          { name: "address", align: "center" },
-          { name: "sign up date", align: "center" },
-          { name: "action", align: "center" },
-          { name: "gender", align: "center" },
-        ];
-        clientTableData.clientsrows = clientsData.map(client => ({
-          "user Name": client.name,
-          email: client.email,
-          "phone number": client.phone_number,
-          "address": client.address,
-          "sign up date": client.created_at.split('.')[0],
-          gender: client.gender
-        }));
-        setClientsRows(clientsData);
-      } catch (error) {
-        console.error('Error fetching clients:', error);
-      }
-    };
-
-    fetchData();
-  }, []); 
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -253,37 +204,6 @@ useEffect(() => {
             </ArgonBox>
           </Card>
         </ArgonBox>
-        <ArgonBox mb={3}>
-          <Card>
-            <ArgonBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <ArgonTypography variant="h6">Clients</ArgonTypography>
-              <Form className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
-                <FormGroup className="mb-0">
-                  <InputGroup className="input-group-alternative" style={{ backgroundColor: 'transparent', borderColor: '#5e72e4', }}>
-                      <InputGroupText style={{ color: '#5e72e4' }} >
-                        <i className="fas fa-search" />
-                      </InputGroupText>
-                      <Input type="text" style={{ color: '#5e72e4' }} placeholder="Search" value={searchClientQuery} onChange={handleSearchClientInputChange} />
-                  </InputGroup>
-                </FormGroup>
-              </Form>              
-            </ArgonBox>
-            <ArgonBox
-              sx={{
-                "& .MuiTableRow-root:not(:last-child)": {
-                  "& td": {
-                    borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                      `${borderWidth[1]} solid ${borderColor}`,
-                  },
-                },
-              }}
-            >
-              <Table columns={clientcolumns} rows={filteredClientRows} />
-            </ArgonBox>
-          </Card>
-        </ArgonBox>
-        
-        
       </ArgonBox>
       <Footer />
       <Modal isOpen={isModalOpen} toggle={toggleModal}>
